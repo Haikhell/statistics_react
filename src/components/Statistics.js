@@ -5,13 +5,18 @@ import axios from "axios";
 import { Button, Table, Card } from "react-bootstrap"; // Імпорт з Bootstrap
 
 const StatisticsTable = () => {
-  const api = `http://185.161.209.66:3111/stats`;
+  const api = `http://localhost:3111/stats`;
   const [statistics, setStatistics] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [timeMode, setTimeMode] = useState("hourly");
+
+  // Для пагінації
+  const [limit, setLimit] = useState(10); // Кількість записів на сторінку
+  const [offset, setOffset] = useState(0); // Зміщення для пагінації
+  const [totalRecords, setTotalRecords] = useState(0); // Загальна кількість записів
 
   useEffect(() => {
     fetchProjects();
@@ -21,7 +26,7 @@ const StatisticsTable = () => {
     if (selectedProject) {
       fetchStatistics();
     }
-  }, [selectedProject, startDate, endDate, timeMode]);
+  }, [selectedProject, startDate, endDate, timeMode, limit, offset]);
 
   const fetchProjects = async () => {
     try {
@@ -43,9 +48,12 @@ const StatisticsTable = () => {
           startDate,
           endDate,
           mode: timeMode,
+          limit,
+          offset,
         },
       });
-      setStatistics(response.data);
+      setStatistics(response.data.statistics);
+      setTotalRecords(response.data.total); // Отримуємо загальну кількість записів
     } catch (error) {
       console.error("Error fetching statistics:", error);
     }
@@ -96,6 +104,21 @@ const StatisticsTable = () => {
           </div>
         </div>
 
+        {/* Вибір кількості записів на сторінку */}
+        <div className="mb-3">
+          <label>Записів на сторінку:</label>
+          <select
+            className="form-select"
+            value={limit}
+            onChange={(e) => setLimit(Number(e.target.value))}
+          >
+            <option value={5}>5</option>
+            <option value={10}>10</option>
+            <option value={25}>25</option>
+            <option value={50}>50</option>
+          </select>
+        </div>
+
         <Table striped bordered hover>
           <thead>
             <tr>
@@ -124,6 +147,26 @@ const StatisticsTable = () => {
             ))}
           </tbody>
         </Table>
+
+        {/* Кнопки пагінації */}
+        <div className="d-flex justify-content-between mt-3">
+          <Button
+            onClick={() => setOffset(Math.max(0, offset - limit))}
+            disabled={offset === 0}
+          >
+            Попередня
+          </Button>
+          <span>
+            {offset + 1} - {Math.min(offset + limit, totalRecords)} з{" "}
+            {totalRecords}
+          </span>
+          <Button
+            onClick={() => setOffset(offset + limit)}
+            disabled={offset + limit >= totalRecords}
+          >
+            Наступна
+          </Button>
+        </div>
       </Card.Body>
     </Card>
   );
