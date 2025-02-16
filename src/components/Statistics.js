@@ -5,7 +5,7 @@ import axios from "axios";
 import { Button, Table, Card } from "react-bootstrap"; // Імпорт з Bootstrap
 
 const StatisticsTable = () => {
-  const api = `http://localhost:3111/stats`;
+  const api = `http://185.161.209.66:3111/stats`;
   const [statistics, setStatistics] = useState([]);
   const [projects, setProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState("");
