@@ -13,56 +13,35 @@ import {
   ResponsiveContainer,
 } from "recharts"; // Графіки
 
-const StatisticsTable = () => {
+const GlobalStats = () => {
   const api = `https://api.standoff-bot.site/stats`;
   const [statistics, setStatistics] = useState([]);
-  const [projects, setProjects] = useState([]);
-  const [selectedProject, setSelectedProject] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
-  const [timeMode, setTimeMode] = useState("daily");
 
 
   const [limit, setLimit] = useState(10); // Кількість записів на сторінку
   const [offset, setOffset] = useState(0); // Зміщення для пагінації
   const [totalRecords, setTotalRecords] = useState(0); // Загальна кількість записів
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
 
   useEffect(() => {
-    if (selectedProject) {
-      fetchStatistics();
-    }
-  }, [selectedProject, startDate, endDate, timeMode, limit, offset]);
+    fetchStatistics();
+  }, [startDate, endDate, limit, offset]);
 
-  const fetchProjects = async () => {
-    try {
-      const response = await axios.get(`${api}/projects`);
-      setProjects(response.data);
-      if (response.data.length > 0) {
-        setSelectedProject(response.data[0]._id);
-      }
-    } catch (error) {
-      console.error("Error fetching projects:", error);
-    }
-  };
 
   const fetchStatistics = async () => {
     try {
-      const response = await axios.get(`${api}/all`, {
+
+      const response = await axios.get(`${api}/global`, {
         params: {
-          projectId: selectedProject,
           startDate,
           endDate,
-          mode: timeMode,
           limit,
           offset,
         },
       });
-      setStatistics(response.data.statistics);
-      setTotalRecords(response.data.total); // Отримуємо загальну кількість записів
+      setStatistics(response.data);
     } catch (error) {
       console.error("Error fetching statistics:", error);
     }
@@ -72,17 +51,6 @@ const StatisticsTable = () => {
     <Card>
       <Card.Body>
         <div className="d-flex justify-content-between mb-4">
-          <select
-            className="form-select"
-            value={selectedProject}
-            onChange={(e) => setSelectedProject(e.target.value)}
-          >
-            {projects.map((project) => (
-              <option key={project._id} value={project._id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
           <div className="d-flex">
             <DatePicker
               className="form-control mx-2"
@@ -96,20 +64,6 @@ const StatisticsTable = () => {
             />
           </div>
           <div className="d-flex">
-            <Button
-              onClick={() => setTimeMode("hourly")}
-              variant={timeMode === "hourly" ? "primary" : "outline-primary"}
-              className="mx-1"
-            >
-              Почасова
-            </Button>
-            <Button
-              onClick={() => setTimeMode("daily")}
-              variant={timeMode === "daily" ? "primary" : "outline-primary"}
-              className="mx-1"
-            >
-              Поденна
-            </Button>
           </div>
         </div>
         {/* Вибір кількості записів на сторінку */}
@@ -131,26 +85,24 @@ const StatisticsTable = () => {
           <thead>
             <tr>
               <th>Дата</th>
-              <th>Онлайн</th>
-              <th>Всего юзеров</th>
+              <th>Юзеров нажавших старт сегодня</th>
               <th>Заблокированые</th>
               <th>Трафик (бот)</th>
               <th>Трафик (канал)</th>
-              <th>Трафик (всього)</th>
-              <th>Денег (всього)</th>
+              <th>Трафик (всего)</th>
+              <th>Денег всего</th>
             </tr>
           </thead>
           <tbody>
             {statistics.map((stat) => (
               <tr key={stat._id}>
                 <td>{new Date(stat.date).toLocaleDateString()}</td>
-                <td>{stat.userOnline}</td>
-                <td>{stat.totalUsers}</td>
-                <td>{stat.totalBlock}</td>
-                <td>{stat.traffic.bot}</td>
-                <td>{stat.traffic.channel}</td>
-                <td>{stat.traffic.total}</td>
-                <td>{stat.amount.total}</td>
+                <td>{stat.totalTotalUsers}</td>
+                <td>{stat.totalTotalBlock}</td>
+                <td>{stat.totalTraffic.bot}</td>
+                <td>{stat.totalTraffic.channel}</td>
+                <td>{stat.totalTraffic.total}</td>
+                <td>{stat.totalAmount.total}</td>
               </tr>
             ))}
           </tbody>
@@ -174,7 +126,6 @@ const StatisticsTable = () => {
             Наступна
           </Button>
         </div>
-        {/* Графік Онлайн по дням */}
         <h5 className="mt-4">Трафик флаер</h5>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={[...statistics].reverse()}>
@@ -183,7 +134,7 @@ const StatisticsTable = () => {
             <YAxis />
             <Tooltip />
             <CartesianGrid stroke="#ccc" />
-            <Line type="monotone" dataKey="traffic.total" stroke="#007bff" />
+            <Line type="monotone" dataKey="totalTraffic.total" stroke="#007bff" />
           </LineChart>
         </ResponsiveContainer>
 
@@ -196,7 +147,7 @@ const StatisticsTable = () => {
             <YAxis />
             <Tooltip />
             <CartesianGrid stroke="#ccc" />
-            <Line type="monotone" dataKey="amount.total" stroke="#28a745" />
+            <Line type="monotone" dataKey="totalAmount.total" stroke="#28a745" />
           </LineChart>
         </ResponsiveContainer>
 
@@ -209,7 +160,7 @@ const StatisticsTable = () => {
             <YAxis />
             <Tooltip />
             <CartesianGrid stroke="#ccc" />
-            <Line type="monotone" dataKey="totalUsers" stroke="#dc3545" />
+            <Line type="monotone" dataKey="totalTotalUsers" stroke="#dc3545" />
           </LineChart>
         </ResponsiveContainer>
       </Card.Body>
@@ -217,4 +168,4 @@ const StatisticsTable = () => {
   );
 };
 
-export default StatisticsTable;
+export default GlobalStats;
