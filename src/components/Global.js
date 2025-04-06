@@ -48,7 +48,7 @@ const GlobalStats = () => {
   };
 
   return (
-    <div>
+    <div style={{ width: "75%", margin: "0 auto" }}>
       <Card>
         <Card.Body>
           <div className="d-flex justify-content-between mb-4">

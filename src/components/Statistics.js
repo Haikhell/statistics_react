@@ -69,7 +69,7 @@ const StatisticsTable = () => {
   };
 
   return (
-    <div style={{ width: "80%", margin: "0 auto" }}>
+    <div style={{ width: "75%", margin: "0 auto" }}>
       <Card>
         <Card.Body>
           <div className="d-flex justify-content-between mb-4">
