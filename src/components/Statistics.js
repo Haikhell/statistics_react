@@ -69,151 +69,153 @@ const StatisticsTable = () => {
   };
 
   return (
-    <Card>
-      <Card.Body>
-        <div className="d-flex justify-content-between mb-4">
-          <select
-            className="form-select"
-            value={selectedProject}
-            onChange={(e) => setSelectedProject(e.target.value)}
-          >
-            {projects.map((project) => (
-              <option key={project._id} value={project._id}>
-                {project.name}
-              </option>
-            ))}
-          </select>
-          <div className="d-flex">
-            <DatePicker
-              className="form-control mx-2"
-              selected={startDate}
-              onChange={setStartDate}
-            />
-            <DatePicker
-              className="form-control mx-2"
-              selected={endDate}
-              onChange={setEndDate}
-            />
-          </div>
-          <div className="d-flex">
-            <Button
-              onClick={() => setTimeMode("hourly")}
-              variant={timeMode === "hourly" ? "primary" : "outline-primary"}
-              className="mx-1"
+    <div>
+      <Card>
+        <Card.Body>
+          <div className="d-flex justify-content-between mb-4">
+            <select
+              className="form-select"
+              value={selectedProject}
+              onChange={(e) => setSelectedProject(e.target.value)}
             >
-              Почасова
-            </Button>
-            <Button
-              onClick={() => setTimeMode("daily")}
-              variant={timeMode === "daily" ? "primary" : "outline-primary"}
-              className="mx-1"
-            >
-              Поденна
-            </Button>
+              {projects.map((project) => (
+                <option key={project._id} value={project._id}>
+                  {project.name}
+                </option>
+              ))}
+            </select>
+            <div className="d-flex">
+              <DatePicker
+                className="form-control mx-2"
+                selected={startDate}
+                onChange={setStartDate}
+              />
+              <DatePicker
+                className="form-control mx-2"
+                selected={endDate}
+                onChange={setEndDate}
+              />
+            </div>
+            <div className="d-flex">
+              <Button
+                onClick={() => setTimeMode("hourly")}
+                variant={timeMode === "hourly" ? "primary" : "outline-primary"}
+                className="mx-1"
+              >
+                Почасова
+              </Button>
+              <Button
+                onClick={() => setTimeMode("daily")}
+                variant={timeMode === "daily" ? "primary" : "outline-primary"}
+                className="mx-1"
+              >
+                Поденна
+              </Button>
+            </div>
           </div>
-        </div>
-        {/* Вибір кількості записів на сторінку */}
-        <div className="mb-3">
-          <label>Записів на сторінку:</label>
-          <select
-            className="form-select"
-            value={limit}
-            onChange={(e) => setLimit(Number(e.target.value))}
-          >
-            <option value={5}>5</option>
-            <option value={10}>10</option>
-            <option value={25}>25</option>
-            <option value={50}>50</option>
-          </select>
-        </div>
+          {/* Вибір кількості записів на сторінку */}
+          <div className="mb-3">
+            <label>Записів на сторінку:</label>
+            <select
+              className="form-select"
+              value={limit}
+              onChange={(e) => setLimit(Number(e.target.value))}
+            >
+              <option value={5}>5</option>
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+            </select>
+          </div>
 
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Дата</th>
-              <th>Онлайн</th>
-              <th>Всего юзеров</th>
-              <th>Заблокированые</th>
-              <th>Трафик (бот)</th>
-              <th>Трафик (канал)</th>
-              <th>Трафик (всього)</th>
-              <th>Денег (всього)</th>
-            </tr>
-          </thead>
-          <tbody>
-            {statistics.map((stat) => (
-              <tr key={stat._id}>
-                <td>{new Date(stat.date).toLocaleDateString()}</td>
-                <td>{stat.userOnline}</td>
-                <td>{stat.totalUsers}</td>
-                <td>{stat.totalBlock}</td>
-                <td>{stat.traffic.bot}</td>
-                <td>{stat.traffic.channel}</td>
-                <td>{stat.traffic.total}</td>
-                <td>{stat.amount.total}</td>
+          <Table striped bordered hover>
+            <thead>
+              <tr>
+                <th>Дата</th>
+                <th>Онлайн</th>
+                <th>Всего юзеров</th>
+                <th>Заблокированые</th>
+                <th>Трафик (бот)</th>
+                <th>Трафик (канал)</th>
+                <th>Трафик (всього)</th>
+                <th>Денег (всього)</th>
               </tr>
-            ))}
-          </tbody>
-        </Table>
-        {/* Кнопки пагінації */}
-        <div className="d-flex justify-content-between mt-3">
-          <Button
-            onClick={() => setOffset(Math.max(0, offset - limit))}
-            disabled={offset === 0}
-          >
-            Попередня
-          </Button>
-          <span>
-            {offset + 1} - {Math.min(offset + limit, totalRecords)} з{" "}
-            {totalRecords}
-          </span>
-          <Button
-            onClick={() => setOffset(offset + limit)}
-            disabled={offset + limit >= totalRecords}
-          >
-            Наступна
-          </Button>
-        </div>
-        {/* Графік Онлайн по дням */}
-        <h5 className="mt-4">Трафик флаер</h5>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={[...statistics].reverse()}>
+            </thead>
+            <tbody>
+              {statistics.map((stat) => (
+                <tr key={stat._id}>
+                  <td>{new Date(stat.date).toLocaleDateString()}</td>
+                  <td>{stat.userOnline}</td>
+                  <td>{stat.totalUsers}</td>
+                  <td>{stat.totalBlock}</td>
+                  <td>{stat.traffic.bot}</td>
+                  <td>{stat.traffic.channel}</td>
+                  <td>{stat.traffic.total}</td>
+                  <td>{stat.amount.total}</td>
+                </tr>
+              ))}
+            </tbody>
+          </Table>
+          {/* Кнопки пагінації */}
+          <div className="d-flex justify-content-between mt-3">
+            <Button
+              onClick={() => setOffset(Math.max(0, offset - limit))}
+              disabled={offset === 0}
+            >
+              Попередня
+            </Button>
+            <span>
+              {offset + 1} - {Math.min(offset + limit, totalRecords)} з{" "}
+              {totalRecords}
+            </span>
+            <Button
+              onClick={() => setOffset(offset + limit)}
+              disabled={offset + limit >= totalRecords}
+            >
+              Наступна
+            </Button>
+          </div>
+          {/* Графік Онлайн по дням */}
+          <h5 className="mt-4">Трафик флаер</h5>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={[...statistics].reverse()}>
 
-            <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
-            <YAxis />
-            <Tooltip />
-            <CartesianGrid stroke="#ccc" />
-            <Line type="monotone" dataKey="traffic.total" stroke="#007bff" />
-          </LineChart>
-        </ResponsiveContainer>
+              <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
+              <YAxis />
+              <Tooltip />
+              <CartesianGrid stroke="#ccc" />
+              <Line type="monotone" dataKey="traffic.total" stroke="#007bff" />
+            </LineChart>
+          </ResponsiveContainer>
 
-        {/* Графік Гроші по дням */}
-        <h5 className="mt-4">Денег</h5>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={[...statistics].reverse()}>
+          {/* Графік Гроші по дням */}
+          <h5 className="mt-4">Денег</h5>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={[...statistics].reverse()}>
 
-            <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
-            <YAxis />
-            <Tooltip />
-            <CartesianGrid stroke="#ccc" />
-            <Line type="monotone" dataKey="amount.total" stroke="#28a745" />
-          </LineChart>
-        </ResponsiveContainer>
+              <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
+              <YAxis />
+              <Tooltip />
+              <CartesianGrid stroke="#ccc" />
+              <Line type="monotone" dataKey="amount.total" stroke="#28a745" />
+            </LineChart>
+          </ResponsiveContainer>
 
-        {/* Графік Загальна кількість стартів */}
-        <h5 className="mt-4">Все старты</h5>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={[...statistics].reverse()}>
+          {/* Графік Загальна кількість стартів */}
+          <h5 className="mt-4">Все старты</h5>
+          <ResponsiveContainer width="100%" height={300}>
+            <LineChart data={[...statistics].reverse()}>
 
-            <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
-            <YAxis />
-            <Tooltip />
-            <CartesianGrid stroke="#ccc" />
-            <Line type="monotone" dataKey="totalUsers" stroke="#dc3545" />
-          </LineChart>
-        </ResponsiveContainer>
-      </Card.Body>
-    </Card>
+              <XAxis dataKey="date" tickFormatter={(tick) => new Date(tick).toLocaleDateString()} />
+              <YAxis />
+              <Tooltip />
+              <CartesianGrid stroke="#ccc" />
+              <Line type="monotone" dataKey="totalUsers" stroke="#dc3545" />
+            </LineChart>
+          </ResponsiveContainer>
+        </Card.Body>
+      </Card>
+    </div>
   );
 };
 
