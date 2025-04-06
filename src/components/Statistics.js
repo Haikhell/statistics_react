@@ -69,7 +69,7 @@ const StatisticsTable = () => {
   };
 
   return (
-    <div>
+    <div style={{ maxWidth: "1200px", margin: "20px auto", padding: "0 20px" }}>
       <Card>
         <Card.Body>
           <div className="d-flex justify-content-between mb-4">
